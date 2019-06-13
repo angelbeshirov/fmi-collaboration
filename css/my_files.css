@@ -50,20 +50,18 @@ li a:hover {
 	background-image: linear-gradient(#f5f7fa, #c3cfe2);
 }
 
-.limiter {
+#files-container {
 	width: 100%;
-	margin: 0 auto;
-  }
+}
   
 .table-container {
-	margin-top: 5%;
-	width: 100%;
+	width: 60%;
 	min-height: 100vh;
-	display: flex;
 	align-items: center;
 	justify-content: center;
 	flex-wrap: wrap;
 	padding: 33px 30px;
+	margin: auto;
 }
   
 table {
@@ -79,6 +77,7 @@ table {
 
 table {
 	position: relative;
+	overflow: visible;
 }
 
 table td, table th {
@@ -161,12 +160,9 @@ tbody tr:hover {
 	width: 70px;
 	text-align: center;
 	padding-right: 32px;
-	/* font-size: 44px; */
 }
 
-
 .button {
-	
     border-style: solid;
     border-width: 0px 0px 3px;
     box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.1) inset;
@@ -202,7 +198,7 @@ tbody tr:hover {
 }
 
 .header {
-	text-align: center;
+	margin-top: 50px;
 }
 
 .selected-file-wrapper {
@@ -215,18 +211,19 @@ tbody tr:hover {
 	width: 250px;
 	height: 25px;
 }
-  
-.dropdown-menu {
+.non-visible {
 	display: none;
+}
+
+.dropdown-menu {
 	font-size: 16px;
 	margin-right: 60px;
 	width: 110px;
 	position: absolute;
 	background-color: #f1f1f1;
-	overflow: auto;
 	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 	right: 0;
-	z-index: 1;
+	z-index: 3;
 }
   
 .dropdown-menu a {
@@ -237,5 +234,24 @@ tbody tr:hover {
 }
 
 .dropdown-menu a:hover {background-color: #ddd;}
-  
-.show {display: block;}
+
+#drop_file_zone {
+    background-color: #EEE; 
+    border: #999 5px dashed;
+    width: 500px; 
+    height: 200px;
+    padding: 8px;
+	font-size: 18px;
+	margin: auto;
+}
+#drag_upload_file {
+  width: 50%;
+  margin: 0 auto;
+}
+#drag_upload_file p {
+  text-align: center;
+}
+#drag_upload_file #selectfile {
+  display: none;
+}
+

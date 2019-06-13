@@ -26,5 +26,4 @@ require "db.php";
     } else {
         echo json_encode(["error_description" => "Невалиден адрес."]);
     }
-
 ?>

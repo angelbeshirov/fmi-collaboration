@@ -1,0 +1,25 @@
+* {
+	box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+#content {
+	width: 70%;
+	height: 100%;
+	background-color : #5c1616; 
+	margin: 150px 150px 150px 150px;
+}
+
+#gradient {
+	background-image: linear-gradient(#f5f7fa, #c3cfe2);
+}

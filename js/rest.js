@@ -1,13 +1,11 @@
-function ajax(url, settings) {
+function ajax(url, settings, callback) {
     if(settings) {
         var xhr = new XMLHttpRequest();
         xhr.onload = function() {
             if(xhr.responseText) {
-                console.log(xhr.responseText);
                 var response = JSON.parse(xhr.response);
-                handleResponse(response);
+                callback(response);
             }
-            // updateLogin();
         };
         xhr.open(settings.method || "GET", url, true);
         if(settings.method == "POST") {
@@ -34,13 +32,7 @@ function getCookie(nameOfCookie) {
 }
 
 function updateLogin() {
-    var cookie = getCookie("displayInfo");
-    // var loginInfo = document.getElementById("login-info");
-
-    // if(loginInfo.hasChildNodes()) {
-    //     document.getElementById("login-info").innerHTML = "";
-    // }
-    
+    var cookie = getCookie("displayInfo");    
     if(cookie) {
         var displayText = decodeURIComponent(cookie).replace("+", " ");
         loginInfo.appendChild(document.createTextNode("Здравейте, " + displayText));

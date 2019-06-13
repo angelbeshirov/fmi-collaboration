@@ -9,7 +9,7 @@ document.getElementById("login-form").addEventListener("submit", function(event)
 	var settings = {};
 	settings["method"] = "POST";
 	settings["data"] = JSON.stringify(jsonObject);
-	ajax("api.php/login", settings);
+	ajax("api.php/login", settings, handleResponse);
 });
 
 function handleResponse(response) {

@@ -1,5 +1,5 @@
 (function buildNavigation() {
-	ajax("api.php/isLoggedIn", {});
+	ajax("api.php/isLoggedIn", {}, populateNavigation);
 }());
 
 function populateNavigation(response) {

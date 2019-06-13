@@ -6,3 +6,7 @@
 	- able to view files in read-only mode
 	- able to edit files simultaniously by multiple users at the same time
 	... to be continued
+	
+	
+2. TODO
+	- fix navigation to be more responsive
