@@ -1,12 +1,17 @@
 <?php
 
-    function validateRegistration($newUser) {
-        shouldStartSession();
+    function validate_registration($new_user) {
+        $database_manager = new database_manager();
+        should_start_session();
         $errors = [];
-        $GET_USER = "SELECT * FROM accounts WHERE email=?;";
-        $result = selectQuery($GET_USER, array($newUser["email"]));
+        $result = $database_manager->get_user_by_email($new_user["email"]);
         if($result) {
-            $errors["error_description"] = "Вече съществува потребител с този имейл.";
+            $errors["email"] = "Вече съществува потребител с този имейл.";
+        }
+
+        $result = $database_manager->get_user_by_username($new_user["username"]);
+        if($result) {
+            $errors["username"] = "Вече съществува потребител с това потребителско име.";
         }
 
         return $errors;

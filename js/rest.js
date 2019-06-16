@@ -1,14 +1,15 @@
 function ajax(url, settings, callback) {
-    if(settings) {
+    if (settings) {
         var xhr = new XMLHttpRequest();
         xhr.onload = function() {
-            if(xhr.responseText) {
+            if (xhr.responseText) {
+                console.log("Received response" + xhr.responseText);
                 var response = JSON.parse(xhr.response);
                 callback(response);
             }
         };
         xhr.open(settings.method || "GET", url, true);
-        if(settings.method == "POST") {
+        if (settings.method == "POST") {
             xhr.setRequestHeader("Content-Type", "application/json");
         }
         console.log("Sending " + settings.data);
@@ -32,9 +33,9 @@ function getCookie(nameOfCookie) {
 }
 
 function updateLogin() {
-    var cookie = getCookie("displayInfo");    
-    if(cookie) {
-        var displayText = decodeURIComponent(cookie).replace("+", " ");
+    var cookie = getCookie("username");
+    if (cookie) {
+        var displayText = decodeURIComponent(cookie);
         loginInfo.appendChild(document.createTextNode("Здравейте, " + displayText));
     }
 }

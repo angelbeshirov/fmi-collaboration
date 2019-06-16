@@ -1,8 +1,8 @@
 <?php
 	require "util.php";
-	require "db.php";
+	require "database_manager.php";
 
-	shouldRedirectNotLoggedIn();
+	should_redirect_not_logged_in();
 
 	if ($_SERVER["REQUEST_METHOD"] === "POST") {
 		if(isset($_FILES["filesToUpload"])) {
@@ -10,7 +10,8 @@
 			
 			$errors = [];
 			$path = "uploads/" . $_SESSION["id"] . "/";
-			$extensions = ["doc", "docx", "txt"];
+			// $extensions = ["doc", "docx", "txt"];
+			$extensions = ["txt"];
 
 			if (!is_dir($path)) {
 				mkdir($path);
@@ -45,8 +46,8 @@
 				}
 
 				if (empty($localErrors)) {
-					move_uploaded_file($file_tmp, $file);
 					save_to_database($file, $file_name, $file_size, $file_extension);
+					move_uploaded_file($file_tmp, $file);
 				}
 			}
 
@@ -59,21 +60,21 @@
 	}
 
 function get_file_extension_ID($file_extension) {
-	$SELECT_EXT = "SELECT id FROM types WHERE extension = ?;";
-	$result = selectQuery($SELECT_EXT, array($file_extension));
-	return $result[0]["id"];
+	$database_manager = new database_manager();
+	return $database_manager->get_type_id($file_extension)[0]["id"];
 }
 
 function save_to_database($file, $file_name, $file_size, $file_extension) {
-	$ADD_FILE = "INSERT INTO files (created_by, path, name, size, uploaded_on, last_changed, type) VALUES (?, ?, ?, ?, ?, ?, ?);";
 	date_default_timezone_set("Europe/Sofia");
 	should_start_session();
 	if(isset($_SESSION["id"])) {
+		$database_manager = new database_manager();
 		$user_id = $_SESSION["id"];
 		$file_extension_id = get_file_extension_ID($file_extension);
 		$date = date("Y-m-d H:i:s", time());
-		if(!executeQuery($ADD_FILE, array($user_id, $file, $file_name, $file_size, $date, $date, $file_extension_id))) {
+		if(!($database_manager->add_file($user_id, $file, $file_name, $file_size, $date, $date, $file_extension_id))) {
 			echo json_encode(["error_description" => "Грешка с базата данни."], JSON_UNESCAPED_UNICODE);
+			
 		}
 	}
 }

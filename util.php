@@ -5,14 +5,14 @@ function redirect($url, $statusCode = 303)
    die();
 }
 
-function shouldRedirectLoggedIn() {
+function should_redirect_logged_in() {
    session_start(); 
    if(isset($_SESSION["id"])) {
       redirect("index.php");
    }
 }
 
-function shouldRedirectNotLoggedIn() {
+function should_redirect_not_logged_in() {
    session_start(); 
    if(!isset($_SESSION["id"])) {
       redirect("index.php");

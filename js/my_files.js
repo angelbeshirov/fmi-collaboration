@@ -4,9 +4,10 @@ function handleResponse(response) {
 
 window.onload = function() {
     retrieveAndPopulate();
+    setUpModal();
 };
 
-window.onclick = function (event) {
+window.onclick = function(event) {
     var dropdowns = document.querySelectorAll("#main-table tbody .file-menu")
     for (var i = 0; i < dropdowns.length; i++) {
         var openDropdown = dropdowns[i].querySelector(".dropdown-menu");
@@ -19,6 +20,25 @@ window.onclick = function (event) {
     }
 }
 
+function setUpModal() {
+    // var modal = document.getElementById("myModal");
+
+    // Get the <span> element that closes the modal
+    // var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    // span.onclick = function() {
+    //     modal.style.display = "none";
+    // }
+
+    // When the user clicks anywhere outside of the modal, close it
+    // window.onclick = function(event) {
+    //     if (event.target == modal) {
+    //         modal.style.display = "none";
+    //     }
+    // }
+}
+
 function retrieveAndPopulate() {
     ajax("docs.php/retrieve", {}, populate);
 }
@@ -28,7 +48,7 @@ function clearTable() {
 }
 
 function populate(response) {
-    if(response) {
+    if (response) {
         var tableBody = document.querySelector("#main-table tbody");
         for (var i = 0; i < response.files.length; i++) {
             var file = response.files[i];
@@ -51,7 +71,7 @@ function populateRow(tr, file) {
 function createTD(value, classes) {
     var col = document.createElement("td");
     col.innerHTML = value;
-    for(var i = 0; i < classes.length; i++) {
+    for (var i = 0; i < classes.length; i++) {
         col.classList.add(classes[i]);
     }
 
@@ -75,11 +95,14 @@ function addActionsToFile() {
         deleteFile(fileName);
     }));
     divChild.appendChild(createA("Сподели с", "#", function(event) {
-        console.log("Clicked share with // STILL IN DEVELOPMENT");
+        var fileName = getParentN(event.target, 4).querySelector(".column1").innerHTML;
+        buildModal(fileName);
+        var modal = document.querySelector("#shareWith");
+        modal.style.display = "block";
     }));
     divChild.appendChild(createA("Отвори", "#", function(event) {
         var fileName = getParentN(event.target, 4).querySelector(".column1").innerHTML;
-        window.location = "editor.php?open=" + fileName;
+        window.location = "editor.php?file=" + fileName;
     }));
     divChild.appendChild(createA("Изтегли", "#", function(event) {
         var fileName = getParentN(event.target, 4).querySelector(".column1").innerHTML;
@@ -110,7 +133,7 @@ function deleteFile(fileName) {
 }
 
 function handleResponseFromDelete(response) {
-    if(!response.error_description) {
+    if (!response.error_description) {
         clearTable();
         retrieveAndPopulate();
     } else {
@@ -127,6 +150,91 @@ function createA(value, href, callback) {
     return el;
 }
 
+function buildModal(fileName) {
+    var modal = document.querySelector("#shareWith");
+    var modalContent = document.createElement("div");
+    var modalHeader = document.createElement("div");
+    var modalBody = document.createElement("div");
+    var close = document.createElement("span");
+    var header = document.createElement("h2");
+    modalContent.classList.add("modal-content");
+    modalHeader.classList.add("modal-header");
+    modalBody.classList.add("modal-body");
+    close.classList.add("close");
+    close.innerHTML = "&times;";
+    header.innerHTML = "Сподели " + fileName;
+
+    var form = document.createElement("form");
+    var rowData = document.createElement("div");
+    rowData.classList.add("row");
+    var labelContainer = document.createElement("div");
+    labelContainer.classList.add("col-25");
+    var inputContainer = document.createElement("div");
+    inputContainer.classList.add("col-75");
+    var label = document.createElement("label");
+    label.for = "email";
+    label.innerHTML = "Имейл:"
+    var inputEmail = document.createElement("input");
+    inputEmail.type = "email";
+    inputEmail.id = "input-email";
+    inputEmail.name = "email"
+    inputEmail.placeholder = "Въведете имейл...";
+    inputEmail.required = true;
+    var rowButton = document.createElement("div");
+    rowButton.classList.add("row");
+    var inputButton = document.createElement("input");
+    inputButton.value = "Сподели";
+    inputButton.type = "submit";
+    inputButton.classList.add("shareWithBtn");
+
+    close.onclick = function() {
+        modal.style.display = "none";
+        modal.innerHTML = "";
+    }
+
+    form.onsubmit = function(event) {
+        event.preventDefault();
+        console.log(fileName);
+        var settings = {};
+        var data = {};
+        data["email"] = document.querySelector("#input-email").value;
+        data["filename"] = fileName;
+        settings["data"] = JSON.stringify(data);
+        settings.method = "POST";
+        ajax("docs.php/share", settings, handleResponseFromSharing);
+    }
+
+    modalHeader.appendChild(close);
+    modalHeader.appendChild(header);
+
+    labelContainer.appendChild(label);
+    inputContainer.appendChild(inputEmail);
+    rowData.appendChild(labelContainer);
+    rowData.appendChild(inputContainer);
+    rowButton.appendChild(inputButton);
+
+    form.appendChild(rowData);
+    form.appendChild(rowButton);
+
+    modalBody.appendChild(form);
+
+    modalContent.appendChild(modalHeader);
+    modalContent.appendChild(modalBody);
+
+    modal.appendChild(modalContent);
+}
+
+function handleResponseFromSharing(response) {
+    if (response.error_description) {
+        alert(response.error_description);
+    } else {
+        alert("Файлът беше успешно споделен с " + response.email);
+        var modal = document.querySelector("#shareWith");
+        modal.style.display = "none";
+        modal.innerHTML = "";
+    }
+}
+
 function upload_file(e) {
     var fileobj;
     e.preventDefault();
@@ -137,7 +245,7 @@ function upload_file(e) {
 
 function file_explorer() {
     document.getElementById('selectfile').click();
-    document.getElementById('selectfile').onchange = function () {
+    document.getElementById('selectfile').onchange = function() {
         files = document.getElementById('selectfile').files;
         file_upload(files);
     };
@@ -152,9 +260,9 @@ function file_upload(files) {
         }
         var xhr = new XMLHttpRequest();
         xhr.open('POST', 'upload.php', true);
-        xhr.onload = function () {
+        xhr.onload = function() {
             var response = JSON.parse(xhr.response);
-            if(!response.error_description) {
+            if (!response.error_description) {
                 clearTable();
                 retrieveAndPopulate();
             }

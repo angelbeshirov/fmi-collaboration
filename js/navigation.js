@@ -1,99 +1,99 @@
 (function buildNavigation() {
-	ajax("api.php/isLoggedIn", {}, populateNavigation);
+    ajax("api.php/isLoggedIn", {}, populateNavigation);
 }());
 
 function populateNavigation(response) {
-	var navigation = document.querySelector("#navigation-bar");
-	navigation.innerHTML = "";
-	var ul = document.createElement("ul");
-    if(response.login || response.loggedin === true) {
-			addNavigationElementsForLoggedUser(ul);
+    var navigation = document.querySelector("#navigation-bar");
+    navigation.innerHTML = "";
+    var ul = document.createElement("ul");
+    if (response.login || response.loggedin === true) {
+        addNavigationElementsForLoggedUser(ul);
     } else {
-			addNavigationElementsForNotLoggedUser(ul);
-	}
-	
-	navigation.appendChild(ul);
+        addNavigationElementsForNotLoggedUser(ul);
+    }
+
+    navigation.appendChild(ul);
 }
 
 function addNavigationElementsForNotLoggedUser(ul) {
-	var liHome = document.createElement("li");
-	var aHome = document.createElement("a");
-	aHome.href="index.php";
-	aHome.classList.add("navigation");
-	aHome.classList.add("fas");
-	aHome.classList.add("fa-home");
+    var liHome = document.createElement("li");
+    var aHome = document.createElement("a");
+    aHome.href = "index.php";
+    aHome.classList.add("navigation");
+    aHome.classList.add("fas");
+    aHome.classList.add("fa-home");
 
-	var liLogin = document.createElement("li");
-	var aLogin = document.createElement("a");
-	aLogin.innerHTML = "Вход";
-	aLogin.href="login.php";
-	aLogin.classList.add("navigation");
+    var liLogin = document.createElement("li");
+    var aLogin = document.createElement("a");
+    aLogin.innerHTML = "Вход";
+    aLogin.href = "login.php";
+    aLogin.classList.add("navigation");
 
-	var liRegister = document.createElement("li");
-	var aRegister = document.createElement("a");
-	aRegister.innerHTML = "Регистрация";
-	aRegister.href="register.php";
-	aRegister.classList.add("navigation");
+    var liRegister = document.createElement("li");
+    var aRegister = document.createElement("a");
+    aRegister.innerHTML = "Регистрация";
+    aRegister.href = "register.php";
+    aRegister.classList.add("navigation");
 
-	liRegister.appendChild(aRegister);
-	liLogin.appendChild(aLogin);
-	liHome.appendChild(aHome);
+    liRegister.appendChild(aRegister);
+    liLogin.appendChild(aLogin);
+    liHome.appendChild(aHome);
 
-	ul.appendChild(liRegister);
-	ul.appendChild(liLogin);
-	ul.appendChild(liHome);
+    ul.appendChild(liRegister);
+    ul.appendChild(liLogin);
+    ul.appendChild(liHome);
 }
 
 function addNavigationElementsForLoggedUser(ul) {
-	var liHome = document.createElement("li");
-	var aHome = document.createElement("a");
-	aHome.href="index.php";
-	aHome.classList.add("navigation");
-	aHome.classList.add("fas");
-	aHome.classList.add("fa-home");
+    var liHome = document.createElement("li");
+    var aHome = document.createElement("a");
+    aHome.href = "index.php";
+    aHome.classList.add("navigation");
+    aHome.classList.add("fas");
+    aHome.classList.add("fa-home");
 
-	var liSharedWithMe = document.createElement("li");
-	var aSharedWithMe = document.createElement("a");
-	aSharedWithMe.innerHTML = "Споделени с мен";
-	aSharedWithMe.href="#";
-	aSharedWithMe.classList.add("navigation");
+    var liSharedWithMe = document.createElement("li");
+    var aSharedWithMe = document.createElement("a");
+    aSharedWithMe.innerHTML = "Споделени с мен";
+    aSharedWithMe.href = "shared_with_me.php";
+    aSharedWithMe.classList.add("navigation");
 
-	var liSharedWithOthers = document.createElement("li");
-	var aSharedWithOthers = document.createElement("a");
-	aSharedWithOthers.innerHTML = "Споделени с други";
-	aSharedWithOthers.href="#";
-	aSharedWithOthers.classList.add("navigation");
+    var liSharedWithOthers = document.createElement("li");
+    var aSharedWithOthers = document.createElement("a");
+    aSharedWithOthers.innerHTML = "Моите споделяния";
+    aSharedWithOthers.href = "my_shares.php";
+    aSharedWithOthers.classList.add("navigation");
 
-	var liMyFiles = document.createElement("li");
-	var aMyFiles = document.createElement("a");
-	aMyFiles.innerHTML = "Мойте файлове";
-	aMyFiles.href="my_files.php";
-	aMyFiles.classList.add("navigation");
+    var liMyFiles = document.createElement("li");
+    var aMyFiles = document.createElement("a");
+    aMyFiles.innerHTML = "Мойте файлове";
+    aMyFiles.href = "my_files.php";
+    aMyFiles.classList.add("navigation");
 
-	var liNotifications = document.createElement("li");
-	var aNotifications = document.createElement("a");
-	aNotifications.innerHTML = "Известия";
-	aNotifications.href="#";
-	aNotifications.classList.add("navigation");
+    var liNotifications = document.createElement("li");
+    var aNotifications = document.createElement("a");
+    aNotifications.innerHTML = "Известия";
+    aNotifications.href = "#";
+    aNotifications.classList.add("navigation");
 
-	var liLogout = document.createElement("li");
-	var aLogout = document.createElement("a");
-	aLogout.innerHTML = "Изход";
-	aLogout.href="index.php";
-	aLogout.classList.add("navigation");
-	aLogout.addEventListener("click", function(event){ajax("api.php/logout", {});});
-	
-	liLogout.appendChild(aLogout);
-	liNotifications.appendChild(aNotifications);
-	liMyFiles.appendChild(aMyFiles);
-	liSharedWithOthers.appendChild(aSharedWithOthers);
-	liSharedWithMe.appendChild(aSharedWithMe);
-	liHome.appendChild(aHome);
+    var liLogout = document.createElement("li");
+    var aLogout = document.createElement("a");
+    aLogout.innerHTML = "Изход";
+    aLogout.href = "index.php";
+    aLogout.classList.add("navigation");
+    aLogout.addEventListener("click", function(event) { ajax("api.php/logout", {}); });
 
-	ul.appendChild(liLogout);
-	ul.appendChild(liNotifications);
-	ul.appendChild(liSharedWithOthers);
-	ul.appendChild(liSharedWithMe);
-	ul.appendChild(liMyFiles);
-	ul.appendChild(liHome);
+    liLogout.appendChild(aLogout);
+    liNotifications.appendChild(aNotifications);
+    liMyFiles.appendChild(aMyFiles);
+    liSharedWithOthers.appendChild(aSharedWithOthers);
+    liSharedWithMe.appendChild(aSharedWithMe);
+    liHome.appendChild(aHome);
+
+    ul.appendChild(liLogout);
+    ul.appendChild(liNotifications);
+    ul.appendChild(liSharedWithOthers);
+    ul.appendChild(liSharedWithMe);
+    ul.appendChild(liMyFiles);
+    ul.appendChild(liHome);
 }

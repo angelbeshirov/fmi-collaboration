@@ -1,17 +1,17 @@
 (function displayLogin() {
-    var cookie = getCookie("displayInfo");
+    var cookie = getCookie("username");
     var loginInfo = document.getElementById("login-info");
 
-    if(loginInfo.hasChildNodes()) {
+    if (loginInfo.hasChildNodes()) {
         document.getElementById("login-info").innerHTML = "";
     }
-    
-    if(cookie) {
+
+    if (cookie) {
         var displayText = decodeURIComponent(cookie).replace("+", " ");
         loginInfo.appendChild(document.createTextNode("Здравейте, " + displayText));
     }
 })();
 
 function handleResponse(response) {
-	populateNavigation(response);
+    populateNavigation(response);
 }
