@@ -88,6 +88,7 @@ class PHPWebSocket
 			10 => integer  MessageOpcode,                     // stored by the first frame for fragmented messages, default value is 0
 			11 => integer  MessageBufferLength                // the payload data length of MessageBuffer
 			12 => integer  File ID							  // the ID of the file to which the connection is opened
+			13 => string   File Path						  // the path to the file opened for the current connection
 		)
 
 		$wsRead[ integer ClientID ] = resource Socket         // this one-dimensional array is used for socket_select()
@@ -254,7 +255,7 @@ class PHPWebSocket
 		$clientID = $this->wsGetNextClientID();
 
 		// store initial client data
-		$this->wsClients[$clientID] = array($socket, '', self::WS_READY_STATE_CONNECTING, time(), false, 0, $clientIP, false, 0, '', 0, 0, 0);
+		$this->wsClients[$clientID] = array($socket, '', self::WS_READY_STATE_CONNECTING, time(), false, 0, $clientIP, false, 0, '', 0, 0, 0, '');
 
 		// store socket - used for socket_select()
 		$this->wsRead[$clientID] = $socket;

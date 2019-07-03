@@ -2,7 +2,7 @@ function ajax(url, settings, callback) {
     if (settings) {
         var xhr = new XMLHttpRequest();
         xhr.onload = function() {
-            if (xhr.responseText) {
+            if (xhr.responseText && callback) {
                 console.log("Received response" + xhr.responseText);
                 var response = JSON.parse(xhr.response);
                 callback(response);

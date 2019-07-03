@@ -3,11 +3,7 @@ var fileID;
 
 function append(text) {
     log = document.getElementById("editor");
-    //Add text to log
-    // $log.append(text);
     log.value = log.value + text;
-    //Autoscroll
-    // $log.scrollTop = $log.scrollHeight - $log.clientHeight;
 }
 
 function send(text) {
@@ -20,23 +16,18 @@ window.onload = function() {
 };
 
 function setUp() {
-    // append("Connecting...");
-    Server = new FancyWebSocket("ws://127.0.0.1:9300");
+    Server = new CustomWebSocket("ws://127.0.0.1:9300");
 
-    //Let the user know we"re connected
     Server.bind("open", function() {
         //append("Connected.");
     });
 
-    //OH NOES! Disconnection occurred.
     Server.bind("close", function(data) {
         alert("Can't connect to the server.");
     });
 
-    //Log any messages sent from server
     Server.bind("message", function(payload) {
         handleMessage(payload);
-        //document.getElementById("editor").value = payload;
     });
 
     Server.connect();
@@ -44,11 +35,13 @@ function setUp() {
     var el = document.getElementById("editor");
     el.addEventListener("keypress", function(event) {
         handleSelectedArea(el);
-        var x = event.charCode || event.keyCode; // Get the Unicode value
+        var x = event.charCode || event.keyCode;
+        if (x == 13)
+            x = 10;
         action = {};
         action["type"] = "INSERT";
         action["position"] = event.target.selectionStart;
-        action["file_id"] = fileID;
+        action["fileID"] = fileID;
         action["data"] = String.fromCharCode(x);
 
         send(JSON.stringify(action));
@@ -63,7 +56,7 @@ function setUp() {
         action = {};
         action["type"] = "INSERT";
         action["position"] = event.target.selectionStart;
-        action["file_id"] = fileID;
+        action["fileID"] = fileID;
         action["data"] = pastedData;
 
         send(JSON.stringify(action));
@@ -77,23 +70,12 @@ function setUp() {
                 action["type"] = "DELETE";
                 action["from"] = cursorPosition - 1;
                 action["to"] = cursorPosition;
-                action["file_id"] = fileID;
+                action["fileID"] = fileID;
 
                 send(JSON.stringify(action));
             }
         }
     });
-
-    // var filename = (new URL(window.location.href)).searchParams.get("file");
-    // var url = "docs.php/retrieve_file_id?filename=" + filename;
-    // var username = (new URL(window.location.href)).searchParams.get("shared_by");
-
-    // if (username) {
-    //     url += ("&username=" + username);
-    // }
-    // var settings = {};
-    // settings["method"] = "GET";
-    // ajax(url, settings, handleInitializeResponse);
 };
 
 function handleSelectedArea(textarea) {
@@ -105,7 +87,7 @@ function handleSelectedArea(textarea) {
         action["type"] = "DELETE";
         action["from"] = start;
         action["to"] = finish;
-        action["file_id"] = fileID;
+        action["fileID"] = fileID;
 
         send(JSON.stringify(action));
         return true;
@@ -115,11 +97,7 @@ function handleSelectedArea(textarea) {
 }
 
 function handleMessage(payload) {
-    // handler = new Handler(Server);
-    // handler.handleMessage(payload);
-
     var message = JSON.parse(payload);
-    console.log("Received message from server: " + payload);
     switch (message.type) {
         case "INITIALIZE":
             var filename = (new URL(window.location.href)).searchParams.get("file");
@@ -154,7 +132,7 @@ function handleInitializeResponse(response) {
         fileID = response.file_id;
         action = {};
         action["type"] = "INITIALIZE";
-        action["file_id"] = fileID;
+        action["fileID"] = fileID;
         send(JSON.stringify(action));
     }
 }

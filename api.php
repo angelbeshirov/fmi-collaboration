@@ -4,27 +4,41 @@ require "validator.php";
 require "util.php";
 require "database_manager.php";
 
+if ($_SERVER["REQUEST_METHOD"] === "GET") {
+    handle_get_request();
+} else if($_SERVER["REQUEST_METHOD"] === "POST") {
+    handle_post_request();
+}
+
+function handle_get_request() {
     $str = explode("/", $_SERVER["REQUEST_URI"]);
     if(sizeof($str) > 2) {
         switch ($str[2]) {
-            case "register":
-                $register_json = file_get_contents("php://input");
-                $new_user = json_decode($register_json, true);
-                handle_registration($new_user);
-                break;
-            case "login":
-                $login_json = file_get_contents("php://input");
-                $user = json_decode($login_json, true);
-                handle_login($user);
-                break;
-            case "isLoggedIn":
+            case "is_logged_in":
                 handle_is_logged_in();
                 break;
             case "logout":
                 handle_logout();
                 break;
         }
-    } else {
-        echo json_encode(["error_description" => "Невалиден адрес."]);
     }
+}
+
+function handle_post_request() {
+    $str = explode("/", $_SERVER["REQUEST_URI"]);
+    if(sizeof($str) > 2) {
+        switch ($str[2]) {
+            case "register":
+                $json = file_get_contents("php://input");
+                $user = json_decode($json, true);
+                handle_registration($user);
+                break;
+            case "login":
+                $json = file_get_contents("php://input");
+                $user = json_decode($json, true);
+                handle_login($user);
+                break;
+        }
+    }
+}
 ?>

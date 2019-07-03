@@ -4,7 +4,6 @@ function handleResponse(response) {
 
 window.onload = function() {
     retrieveAndPopulate();
-    setUpModal();
 };
 
 window.onclick = function(event) {
@@ -18,25 +17,6 @@ window.onclick = function(event) {
     if (event.target.matches('.column6') || event.target.matches('.file-menu')) {
         event.target.querySelector(".dropdown-menu").classList.remove("non-visible");
     }
-}
-
-function setUpModal() {
-    // var modal = document.getElementById("myModal");
-
-    // Get the <span> element that closes the modal
-    // var span = document.getElementsByClassName("close")[0];
-
-    // When the user clicks on <span> (x), close the modal
-    // span.onclick = function() {
-    //     modal.style.display = "none";
-    // }
-
-    // When the user clicks anywhere outside of the modal, close it
-    // window.onclick = function(event) {
-    //     if (event.target == modal) {
-    //         modal.style.display = "none";
-    //     }
-    // }
 }
 
 function retrieveAndPopulate() {
@@ -129,15 +109,15 @@ function getParentN(element, num) {
 function deleteFile(fileName) {
     var settings = {};
     settings["method"] = "DELETE";
-    ajax("docs.php/delete/:" + encodeURIComponent(fileName), settings, handleResponseFromDelete);
+    ajax("docs.php/delete_file/:" + encodeURIComponent(fileName), settings, handleResponseFromDelete);
 }
 
 function handleResponseFromDelete(response) {
-    if (!response.error_description) {
+    if (response.error_description) {
+        alert(response.error_description);
+    } else {
         clearTable();
         retrieveAndPopulate();
-    } else {
-        console.log(response.error_description);
     }
 }
 
@@ -194,7 +174,6 @@ function buildModal(fileName) {
 
     form.onsubmit = function(event) {
         event.preventDefault();
-        console.log(fileName);
         var settings = {};
         var data = {};
         data["email"] = document.querySelector("#input-email").value;
@@ -239,7 +218,6 @@ function upload_file(e) {
     var fileobj;
     e.preventDefault();
     fileobj = e.dataTransfer.files;
-    console.log(fileobj);
     file_upload(fileobj);
 }
 
@@ -261,8 +239,12 @@ function file_upload(files) {
         var xhr = new XMLHttpRequest();
         xhr.open('POST', 'upload.php', true);
         xhr.onload = function() {
-            var response = JSON.parse(xhr.response);
-            if (!response.error_description) {
+            if (xhr.response) {
+                var response = JSON.parse(xhr.response);
+                if (response.error_description) {
+                    alert(response.error_description);
+                }
+            } else {
                 clearTable();
                 retrieveAndPopulate();
             }

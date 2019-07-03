@@ -1,36 +1,34 @@
 <?php
-// prevent the server from timing out
+
 set_time_limit(0);
 
-// include the web sockets server script (the server is started at the far bottom of this file)
-require "class.PHPWebSocket.php";
+require "PHPWebSocket.php";
 require "action.php";
 require "database_manager.php";
 
 // when a client sends data to the server
 function wsOnMessage($clientID, $message, $messageLength, $binary) {
+	date_default_timezone_set("Europe/Sofia");
+	$database_manager = new database_manager();
 
 	global $Server;
 	$ip = long2ip($Server->wsClients[$clientID][6]);
-
-	// check if message length is 0
-	// if ($messageLength == 0) {
-	// 	$Server->wsClose($clientID);
-	// 	return;
-	// }
-
-	// message must be in the format
-	// {
-	// 		type: <Init/Update Users/Insert/Delete>
-	// 		value: depending on the type (some validation might be added in future)
-	// }
 	$messageObj = json_decode($message, true);
 
 	switch ($messageObj["type"]) {
 		case Type::INITIALIZE_TYPE:
-			$fileID = $messageObj["file_id"];
+			$fileID = $messageObj["fileID"];
+			
 			$Server->log("Received initialize message for fileID " . $fileID);
 			$Server->wsClients[$clientID][12] = $fileID;
+			$file_path = $database_manager->get_path_by_id($fileID)[0]["path"];
+			$Server->log("File path which was retrieved is " . realpath($file_path));
+			$Server->wsClients[$clientID][13] = realpath($file_path);
+
+			$contents = file_get_contents(realpath($file_path));
+			$new_content = str_replace("\r\n", "\n", $contents);
+			file_put_contents(realpath($file_path), $new_content);
+
 
 			if (isset($Server->wsClientFileCount[$fileID]) && $Server->wsClientFileCount[$fileID] >= 1) {
 				$Server->wsClientFileCount[$fileID]++;
@@ -48,9 +46,18 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 			}
 			break;
 		case Type::DELETE_TYPE:
-			$fileID = $messageObj["file_id"];
+			$fileID = $messageObj["fileID"];
 			$from = $messageObj["from"];
 			$to = $messageObj["to"];
+
+			$path = $Server->wsClients[$clientID][13];
+
+			$contents = file_get_contents($path);
+
+			$new_content = mb_substr($contents, 0, $from) . mb_substr($contents, $to, mb_strlen($contents));
+
+			file_put_contents($path, $new_content);
+			$database_manager->update_file_change_time(date("Y-m-d H:i:s", time()), $fileID);
 
 			foreach($Server->wsClients as $id => $client) {
 				if(isset($client[12]) && $client[12] === $fileID && $id != $clientID) {
@@ -59,9 +66,18 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 			}
 			break;
 		case Type::INSERT_TYPE:
-			$fileID = $messageObj["file_id"];
+			$fileID = $messageObj["fileID"];
 			$position = $messageObj["position"];
 			$data = $messageObj["data"];
+
+			$path = $Server->wsClients[$clientID][13];
+
+			$contents = file_get_contents($path);
+
+			$new_content = mb_substr($contents, 0, $position) . $data . mb_substr($contents, $position, mb_strlen($contents));
+
+			file_put_contents($path, $new_content);
+			$database_manager->update_file_change_time(date("Y-m-d H:i:s", time()), $fileID);
 
 			foreach($Server->wsClients as $id => $client) {
 				if(isset($client[12]) && $client[12] === $fileID && $id != $clientID) {
@@ -73,23 +89,16 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 }
 
 // when a client connects
-function wsOnOpen($clientID)
+function wsOnOpen($client_id)
 {
 	global $Server;
-	$ip = long2ip($Server->wsClients[$clientID][6]);
+	$ip = long2ip($Server->wsClients[$client_id][6]);
 
-	$Server->log("$ip ($clientID) has connected.");
+	$Server->log("$ip ($client_id) has connected.");
 	$Server->log("Current number of connected users is:" . $Server->wsClientCount);
 	$Server->log("Sending init request");
 
-	$Server->wsSend($clientID, json_encode(new Init()));
-
-	// Send to everyone the new count of users
-	// foreach($Server->wsClients as $id => $client) {
-	// 	$Server->wsSend($id, json_encode(new UpdateUsers($Server->wsClientCount)));
-	// }
-		// if ($id != $clientID)
-			// $Server->wsSend($id, "Visitor $clientID ($ip) has joined the room.");
+	$Server->wsSend($client_id, json_encode(new Init()));
 }
 
 // when a client closes or lost connection
@@ -98,7 +107,6 @@ function wsOnClose($clientID, $status) {
 	$ip = long2ip($Server->wsClients[$clientID][6]);
 
 	$Server->log("$ip ($clientID) has disconnected.");
-
 	$Server->log("Current number of connected users is:" . $Server->wsClientCount);
 
 	$fileID = $Server->wsClients[$clientID][12];
@@ -125,10 +133,6 @@ function wsOnClose($clientID, $status) {
 			$Server->wsSend($id, json_encode(new UpdateUsers($Server->wsClientFileCount[$fileID])));
 		}
 	}
-
-	//Send a user left notice to everyone in the room
-	// foreach ( $Server->wsClients as $id => $client )
-		// $Server->wsSend($id, "Visitor $clientID ($ip) has left the room.");
 }
 
 // start the server
@@ -136,8 +140,7 @@ $Server = new PHPWebSocket();
 $Server->bind('message', 'wsOnMessage');
 $Server->bind('open', 'wsOnOpen');
 $Server->bind('close', 'wsOnClose');
-// for other computers to connect, you will probably need to change this to your LAN IP or external IP,
-// alternatively use: gethostbyaddr(gethostbyname($_SERVER['SERVER_NAME']))
+
 $Server->wsStartServer('127.0.0.1', 9300);
 
 ?>

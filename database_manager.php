@@ -23,13 +23,17 @@ class database_manager {
                                   WHERE username = ?;";
 
     private $GET_FILE = "SELECT files.id, created_by, path, name, size, uploaded_on, last_changed, type
-    FROM files
-    INNER JOIN types ON files.type = types.id 
-    WHERE created_by = ? AND name = ?";
+                         FROM files
+                         INNER JOIN types ON files.type = types.id 
+                         WHERE created_by = ? AND name = ?";
 
     private $GET_PATH = "SELECT path 
                          FROM files 
                          WHERE created_by = ? AND name = ?";
+
+    private $GET_PATH_BY_ID = "SELECT path 
+                               FROM files 
+                               WHERE id = ?;";
 
     private $GET_FILES_FOR_USER = "SELECT files.name, files.size, files.uploaded_on, files.last_changed, types.type_name 
                                    FROM files 
@@ -53,12 +57,19 @@ class database_manager {
                                    INNER JOIN types ON files.type = types.id
                                    INNER JOIN accounts ON shared_to = accounts.id
                                    WHERE shared_by = ?;";
+    
+    private $UPDATE_FILE_CHANGE_TIME = "UPDATE files 
+                                        SET last_changed = ?
+                                        WHERE id = ?;";
 
     private $DELETE_FILE = "DELETE FROM files 
                             WHERE created_by = ? AND name = ?;";
 
     private $DELETE_SHARE = "DELETE FROM shares 
                              WHERE id = ?;";
+
+    private $DELETE_SHARE_BY_FILENAME_AND_ID = "DELETE FROM shares
+                                                WHERE shared_by = ? AND file_name = ?";
 
     public function add_file($created_by, $path, $name, $size, $uploaded_on, $last_changed, $type) {
         return $this->execute_query($this->ADD_FILE, array($created_by, $path, $name, $size, $uploaded_on, $last_changed, $type));
@@ -88,6 +99,10 @@ class database_manager {
         return $this->select_query($this->GET_PATH, array($created_by, $name));
     }
 
+    public function get_path_by_id($id) {
+        return $this->select_query($this->GET_PATH_BY_ID, array($id));
+    }
+
     public function get_file($created_by, $name) {
         return $this->select_query($this->GET_FILE, array($created_by, $name));
     }
@@ -108,12 +123,20 @@ class database_manager {
         return $this->select_query($this->GET_SHARES_BY_USER, array($shared_by));
     }
 
+    public function update_file_change_time($change_time, $id) {
+        return $this->execute_query($this->UPDATE_FILE_CHANGE_TIME, array($change_time, $id));
+    }
+
     public function delete_file_for_user($user_id, $file_name) {
         return $this->execute_query($this->DELETE_FILE, array($user_id, $file_name));
     }
 
     public function delete_share($share_id) {
         return $this->execute_query($this->DELETE_SHARE, array($share_id));
+    }
+
+    public function delete_share_by_filename_and_id($shared_by, $filename) {
+        return $this->execute_query($this->DELETE_SHARE_BY_FILENAME_AND_ID, array($shared_by, $filename));
     }
 
     private function execute_query($query, $values) {

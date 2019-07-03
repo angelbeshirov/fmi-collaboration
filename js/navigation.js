@@ -1,5 +1,5 @@
 (function buildNavigation() {
-    ajax("api.php/isLoggedIn", {}, populateNavigation);
+    ajax("api.php/is_logged_in", {}, populateNavigation);
 }());
 
 function populateNavigation(response) {
@@ -70,12 +70,6 @@ function addNavigationElementsForLoggedUser(ul) {
     aMyFiles.href = "my_files.php";
     aMyFiles.classList.add("navigation");
 
-    var liNotifications = document.createElement("li");
-    var aNotifications = document.createElement("a");
-    aNotifications.innerHTML = "Известия";
-    aNotifications.href = "#";
-    aNotifications.classList.add("navigation");
-
     var liLogout = document.createElement("li");
     var aLogout = document.createElement("a");
     aLogout.innerHTML = "Изход";
@@ -84,14 +78,12 @@ function addNavigationElementsForLoggedUser(ul) {
     aLogout.addEventListener("click", function(event) { ajax("api.php/logout", {}); });
 
     liLogout.appendChild(aLogout);
-    liNotifications.appendChild(aNotifications);
     liMyFiles.appendChild(aMyFiles);
     liSharedWithOthers.appendChild(aSharedWithOthers);
     liSharedWithMe.appendChild(aSharedWithMe);
     liHome.appendChild(aHome);
 
     ul.appendChild(liLogout);
-    ul.appendChild(liNotifications);
     ul.appendChild(liSharedWithOthers);
     ul.appendChild(liSharedWithMe);
     ul.appendChild(liMyFiles);

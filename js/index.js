@@ -9,6 +9,9 @@
     if (cookie) {
         var displayText = decodeURIComponent(cookie).replace("+", " ");
         loginInfo.appendChild(document.createTextNode("Здравейте, " + displayText));
+    } else {
+        console.log("Sending logout!");
+        ajax("api.php/logout", {}, handleResponse);
     }
 })();
 

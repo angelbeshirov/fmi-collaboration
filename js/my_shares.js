@@ -117,12 +117,11 @@ function removeShare(response) {
 }
 
 function handleResponseFromDelete(response) {
-    console.log("Received response from delete:" + response);
-    if (!response.error_description) {
+    if (response.error_description) {
+        alert(response.error_description);
+    } else {
         clearTable();
         retrieveSharesAndPopulate();
-    } else {
-        console.log(response.error_description);
     }
 }
 

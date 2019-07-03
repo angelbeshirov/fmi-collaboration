@@ -27,14 +27,14 @@
 		<form id="login-form">
 			<h2 class="form-title">Вход</h2>
 			<div class="input-container">
-				<input class="field-input" id="email" name="email" type="email" placeholder="Имейл" required></input>
+				<input class="field-input" id="email" name="email" type="email" placeholder="Имейл" required/>
 			</div>
 			<div class="input-container">
-				<input class="field-input" id="password" name="password" type="password" placeholder="Парола" required></input>
+				<input class="field-input" id="password" name="password" type="password" placeholder="Парола" required/>
 			</div>
 			<div class="input-container">
 				<div class="error"></div>
-				<input id="login" class="btn" type="submit" value="Вход"></input>
+				<input id="login" class="btn" type="submit" value="Вход"/>
 			</div>
 		</form>
 	</section>

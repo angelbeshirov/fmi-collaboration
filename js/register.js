@@ -55,10 +55,7 @@ function validate() {
 }
 
 function handleResponse(response) {
-    console.log(response.error_description);
     if (response.error_description) {
-        // var errors = JSON.parse(response.error_description);
-        // console.log(errors);
         if (response.error_description.email) {
             var errorElement = document.querySelector("#email").parentElement.querySelector(".error");
             errorElement.appendChild(document.createTextNode(response.error_description.email));
@@ -67,8 +64,8 @@ function handleResponse(response) {
             errorElement.appendChild(document.createTextNode(response.error_description.username));
         }
     } else if (response.register) {
-        var errorElement = document.querySelector("#register").parentElement.querySelector(".message");
-        errorElement.appendChild(document.createTextNode("Вашата регистрация беше успешна."));
+        var successElement = document.querySelector("#register").parentElement.querySelector(".message");
+        successElement.appendChild(document.createTextNode("Вашата регистрация беше успешна."));
         resetInput();
     } else {
         populateNavigation(response);
