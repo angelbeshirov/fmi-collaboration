@@ -1,5 +1,5 @@
 <?php
-	require 'util.php';
+	require "util/util.php";
 	should_redirect_logged_in();
 ?>
 

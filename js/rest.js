@@ -3,7 +3,6 @@ function ajax(url, settings, callback) {
         var xhr = new XMLHttpRequest();
         xhr.onload = function() {
             if (xhr.responseText && callback) {
-                console.log("Received response" + xhr.responseText);
                 var response = JSON.parse(xhr.response);
                 callback(response);
             }
@@ -12,7 +11,6 @@ function ajax(url, settings, callback) {
         if (settings.method == "POST") {
             xhr.setRequestHeader("Content-Type", "application/json");
         }
-        console.log("Sending " + settings.data);
         xhr.send(settings.data || null);
     }
 }

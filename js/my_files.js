@@ -1,7 +1,3 @@
-function handleResponse(response) {
-    populateNavigation(response);
-}
-
 window.onload = function() {
     retrieveAndPopulate();
 };
@@ -20,7 +16,7 @@ window.onclick = function(event) {
 }
 
 function retrieveAndPopulate() {
-    ajax("docs.php/retrieve", {}, populate);
+    ajax("docs_api.php/retrieve", {}, populate);
 }
 
 function clearTable() {
@@ -86,7 +82,7 @@ function addActionsToFile() {
     }));
     divChild.appendChild(createA("Изтегли", "#", function(event) {
         var fileName = getParentN(event.target, 4).querySelector(".column1").innerHTML;
-        window.location = "docs.php/download?file=" + fileName;
+        window.location = "docs_api.php/download?file=" + fileName;
     }));
 
     divWrapper.appendChild(divChild);
@@ -109,7 +105,7 @@ function getParentN(element, num) {
 function deleteFile(fileName) {
     var settings = {};
     settings["method"] = "DELETE";
-    ajax("docs.php/delete_file/:" + encodeURIComponent(fileName), settings, handleResponseFromDelete);
+    ajax("docs_api.php/delete_file/:" + encodeURIComponent(fileName), settings, handleResponseFromDelete);
 }
 
 function handleResponseFromDelete(response) {
@@ -180,7 +176,7 @@ function buildModal(fileName) {
         data["filename"] = fileName;
         settings["data"] = JSON.stringify(data);
         settings.method = "POST";
-        ajax("docs.php/share", settings, handleResponseFromSharing);
+        ajax("docs_api.php/share", settings, handleResponseFromSharing);
     }
 
     modalHeader.appendChild(close);

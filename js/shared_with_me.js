@@ -1,7 +1,3 @@
-function handleResponse(response) {
-    populateNavigation(response);
-}
-
 window.onload = function() {
     retrieveSharesAndPopulate();
 };
@@ -20,7 +16,7 @@ window.onclick = function(event) {
 }
 
 function retrieveSharesAndPopulate() {
-    ajax("docs.php/retrieve_shares", {}, populate);
+    ajax("docs_api.php/retrieve_shares", {}, populate);
 }
 
 function clearTable() {
@@ -84,7 +80,7 @@ function addActionsToShare() {
     divChild.appendChild(createA("Изтегли", "#", function(event) {
         var filename = getParentN(event.target, 4).querySelector(".column1").innerHTML;
         var sharedBy = getParentN(event.target, 4).querySelector(".column2").innerHTML;
-        window.location = "docs.php/download?file=" + filename + "&shared_by=" + sharedBy;
+        window.location = "docs_api.php/download?file=" + filename + "&shared_by=" + sharedBy;
     }));
 
     divWrapper.appendChild(divChild);
@@ -107,14 +103,14 @@ function getParentN(element, num) {
 function getShareIDAndRemove(filename, username) {
     var settings = {};
     settings["method"] = "GET";
-    ajax("docs.php/get_share_id?filename=" + filename + "&shared_by=" + username, {}, removeShare);
+    ajax("docs_api.php/get_share_id?filename=" + filename + "&shared_by=" + username, {}, removeShare);
 }
 
 function removeShare(response) {
     if (response.id) {
         var settings = {};
         settings["method"] = "DELETE";
-        ajax("docs.php/delete_share/:" + response.id, settings, handleResponseFromDelete);
+        ajax("docs_api.php/delete_share/:" + response.id, settings, handleResponseFromDelete);
     }
 }
 

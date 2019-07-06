@@ -1,7 +1,8 @@
 <?php
 
-require "util.php";
+require "util/util.php";
 require "database_manager.php";
+require "config_manager.php";
 
 should_redirect_not_logged_in();
 
@@ -13,8 +14,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 function upload_file() {
+	$configs = new config_manager();
 	$errors = [];
-	$path = "uploads/" . $_SESSION["id"] . "/";
+	$path = $configs->get_key("uploads_dir") . $_SESSION["id"] . "/";
 	$extensions = ["txt"];
 
 	if (!is_dir($path)) {
@@ -26,7 +28,6 @@ function upload_file() {
 		$localErrors = [];
 		$file_name = $_FILES["filesToUpload"]["name"][$i];
 		$file_tmp = $_FILES["filesToUpload"]["tmp_name"][$i];
-		$file_type = $_FILES["filesToUpload"]["type"][$i];
 		$file_size = $_FILES["filesToUpload"]["size"][$i];
 
 		$tmp = explode(".", $_FILES["filesToUpload"]["name"][$i]);

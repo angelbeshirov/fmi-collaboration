@@ -1,6 +1,7 @@
 <?php
-require "util.php";
+require "util/util.php";
 require "database_manager.php";
+require "config_manager.php";
 
 should_redirect_not_logged_in();
 
@@ -35,7 +36,7 @@ if(!isset($path) || !file_exists($path)) {
 <head>
 	<meta name="viewport" width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0>
 	<meta charset='UTF-8'/>
-	<script type="text/javascript" src="ckeditor/ckeditor.js"></script>
+	<title>Editor</title>
 	<link rel="stylesheet" type="text/css" media="screen" href="css/editor.css">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 	<link rel="stylesheet" type="text/css" media="screen" href="css/navigation.css">

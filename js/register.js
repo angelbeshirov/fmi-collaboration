@@ -11,7 +11,7 @@ document.getElementById("register-form").addEventListener("submit", function(eve
         var settings = {};
         settings["method"] = "POST";
         settings["data"] = JSON.stringify(jsonObject);
-        ajax("api.php/register", settings, handleResponse);
+        ajax("user_api.php/register", settings, handleResponse);
     }
 });
 

@@ -96,9 +96,9 @@
 
 
     abstract class Type { 
-        public const INSERT_TYPE = "INSERT"; 
-        public const DELETE_TYPE = "DELETE"; 
-        public const UPDATE_USERS_TYPE  = "UPDATE USERS";
-        public const INITIALIZE_TYPE = "INITIALIZE";
+        const INSERT_TYPE = "INSERT"; 
+        const DELETE_TYPE = "DELETE"; 
+        const UPDATE_USERS_TYPE  = "UPDATE USERS";
+        const INITIALIZE_TYPE = "INITIALIZE";
     }
 ?>

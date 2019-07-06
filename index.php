@@ -13,7 +13,7 @@
 	<script type="text/javascript" src="js/navigation.js" defer></script>
 	<script type="text/javascript" src="js/index.js" defer></script>
 	<script type="text/javascript" src="js/rest.js"></script>
-	
+
 </head>
 <body id="gradient">
 	<nav id="navigation-bar">

@@ -1,5 +1,5 @@
 (function buildNavigation() {
-    ajax("api.php/is_logged_in", {}, populateNavigation);
+    ajax("user_api.php/is_logged_in", {}, populateNavigation);
 }());
 
 function populateNavigation(response) {
@@ -66,7 +66,7 @@ function addNavigationElementsForLoggedUser(ul) {
 
     var liMyFiles = document.createElement("li");
     var aMyFiles = document.createElement("a");
-    aMyFiles.innerHTML = "Мойте файлове";
+    aMyFiles.innerHTML = "Моите файлове";
     aMyFiles.href = "my_files.php";
     aMyFiles.classList.add("navigation");
 
@@ -75,7 +75,7 @@ function addNavigationElementsForLoggedUser(ul) {
     aLogout.innerHTML = "Изход";
     aLogout.href = "index.php";
     aLogout.classList.add("navigation");
-    aLogout.addEventListener("click", function(event) { ajax("api.php/logout", {}); });
+    aLogout.addEventListener("click", function(event) { ajax("user_api.php/logout", {}); });
 
     liLogout.appendChild(aLogout);
     liMyFiles.appendChild(aMyFiles);

@@ -1,6 +1,11 @@
 <?php
 
 class database_manager {
+
+    private $CREDENTIALS;
+    private $USER;
+    private $PASSWORD;
+
     private $ADD_FILE = "INSERT INTO files (created_by, path, name, size, uploaded_on, last_changed, type) 
                          VALUES (?, ?, ?, ?, ?, ?, ?);";
 
@@ -58,8 +63,8 @@ class database_manager {
                                    INNER JOIN accounts ON shared_to = accounts.id
                                    WHERE shared_by = ?;";
     
-    private $UPDATE_FILE_CHANGE_TIME = "UPDATE files 
-                                        SET last_changed = ?
+    private $UPDATE_FILE_SIZE_AND_TIME = "UPDATE files 
+                                        SET size = ?,  last_changed = ?
                                         WHERE id = ?;";
 
     private $DELETE_FILE = "DELETE FROM files 
@@ -70,6 +75,13 @@ class database_manager {
 
     private $DELETE_SHARE_BY_FILENAME_AND_ID = "DELETE FROM shares
                                                 WHERE shared_by = ? AND file_name = ?";
+
+    public function __construct() {
+        $configs = new config_manager();
+        $this->CREDENTIALS = "mysql:host=" . $configs->get_key("host") . ";dbname=" . $configs->get_key("dbname") . ";charset=" . $configs->get_key("charset");
+        $this->USER = $configs->get_key("user");
+        $this->PASSWORD = base64_decode($configs->get_key("password"));
+    }
 
     public function add_file($created_by, $path, $name, $size, $uploaded_on, $last_changed, $type) {
         return $this->execute_query($this->ADD_FILE, array($created_by, $path, $name, $size, $uploaded_on, $last_changed, $type));
@@ -123,8 +135,8 @@ class database_manager {
         return $this->select_query($this->GET_SHARES_BY_USER, array($shared_by));
     }
 
-    public function update_file_change_time($change_time, $id) {
-        return $this->execute_query($this->UPDATE_FILE_CHANGE_TIME, array($change_time, $id));
+    public function update_file_size_and_time($file_size, $change_time, $id) {
+        return $this->execute_query($this->UPDATE_FILE_SIZE_AND_TIME, array($file_size, $change_time, $id));
     }
 
     public function delete_file_for_user($user_id, $file_name) {
@@ -140,19 +152,13 @@ class database_manager {
     }
 
     private function execute_query($query, $values) {
-        $credentials = "mysql:host=localhost;dbname=webproject;charset=utf8";
-        $user = "root";
-        $password = "";
-        $conn = new PDO($credentials, $user, $password);
+        $conn = new PDO($this->CREDENTIALS, $this->USER, $this->PASSWORD);
         $stmt = $conn->prepare($query);
         return $stmt->execute($values);
     }
 
     private function select_query($query, $values) {
-        $credentials = "mysql:host=localhost;dbname=webproject;charset=utf8";
-        $user = "root";
-        $password = "";
-        $conn = new PDO($credentials, $user, $password);
+        $conn = new PDO($this->CREDENTIALS, $this->USER, $this->PASSWORD);
         $stmt = $conn->prepare($query);
         if($stmt->execute($values)) {
             return $stmt->fetchAll(PDO::FETCH_ASSOC);

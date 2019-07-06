@@ -42,6 +42,16 @@ function handle_is_logged_in() {
     }
 }
 
+function handle_get_socket_address() {
+    should_start_session();
+    if(isset($_SESSION["loggedin"]) && isset($_SESSION["id"]) && $_SESSION["loggedin"]) {
+        $configs = new config_manager();
+        echo json_encode(["socket_address" => $configs->get_key("server_public_ip") . ":" . $configs->get_key("server_port")], JSON_UNESCAPED_UNICODE);
+    } else {
+        echo json_encode(["error_description" => "Изтекла сесия."], JSON_UNESCAPED_UNICODE);
+    }
+}
+
 function handle_logout() {
     should_start_session();
     if(isset($_SESSION["id"])) {

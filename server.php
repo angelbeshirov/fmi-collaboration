@@ -2,13 +2,15 @@
 
 set_time_limit(0);
 
-require "PHPWebSocket.php";
-require "action.php";
+require "websocket/PHPWebSocket.php";
+require "websocket/action.php";
 require "database_manager.php";
+require "config_manager.php";
 
 // when a client sends data to the server
 function wsOnMessage($clientID, $message, $messageLength, $binary) {
 	date_default_timezone_set("Europe/Sofia");
+	clearstatcache();
 	$database_manager = new database_manager();
 
 	global $Server;
@@ -45,26 +47,6 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 				}
 			}
 			break;
-		case Type::DELETE_TYPE:
-			$fileID = $messageObj["fileID"];
-			$from = $messageObj["from"];
-			$to = $messageObj["to"];
-
-			$path = $Server->wsClients[$clientID][13];
-
-			$contents = file_get_contents($path);
-
-			$new_content = mb_substr($contents, 0, $from) . mb_substr($contents, $to, mb_strlen($contents));
-
-			file_put_contents($path, $new_content);
-			$database_manager->update_file_change_time(date("Y-m-d H:i:s", time()), $fileID);
-
-			foreach($Server->wsClients as $id => $client) {
-				if(isset($client[12]) && $client[12] === $fileID && $id != $clientID) {
-					$Server->wsSend($id, json_encode(new Delete($from, $to)));
-				}
-			}
-			break;
 		case Type::INSERT_TYPE:
 			$fileID = $messageObj["fileID"];
 			$position = $messageObj["position"];
@@ -77,11 +59,31 @@ function wsOnMessage($clientID, $message, $messageLength, $binary) {
 			$new_content = mb_substr($contents, 0, $position) . $data . mb_substr($contents, $position, mb_strlen($contents));
 
 			file_put_contents($path, $new_content);
-			$database_manager->update_file_change_time(date("Y-m-d H:i:s", time()), $fileID);
+			$database_manager->update_file_size_and_time(filesize($path), date("Y-m-d H:i:s", time()), $fileID);
 
 			foreach($Server->wsClients as $id => $client) {
 				if(isset($client[12]) && $client[12] === $fileID && $id != $clientID) {
 					$Server->wsSend($id, json_encode(new Insert($position, $data)));
+				}
+			}
+			break;
+		case Type::DELETE_TYPE:
+			$fileID = $messageObj["fileID"];
+			$from = $messageObj["from"];
+			$to = $messageObj["to"];
+
+			$path = $Server->wsClients[$clientID][13];
+
+			$contents = file_get_contents($path);
+
+			$new_content = mb_substr($contents, 0, $from) . mb_substr($contents, $to, mb_strlen($contents));
+
+			file_put_contents($path, $new_content);
+			$database_manager->update_file_size_and_time(filesize($path), date("Y-m-d H:i:s", time()), $fileID);
+
+			foreach($Server->wsClients as $id => $client) {
+				if(isset($client[12]) && $client[12] === $fileID && $id != $clientID) {
+					$Server->wsSend($id, json_encode(new Delete($from, $to)));
 				}
 			}
 			break;
@@ -136,11 +138,12 @@ function wsOnClose($clientID, $status) {
 }
 
 // start the server
+$configs = new config_manager();
 $Server = new PHPWebSocket();
-$Server->bind('message', 'wsOnMessage');
-$Server->bind('open', 'wsOnOpen');
-$Server->bind('close', 'wsOnClose');
+$Server->bind("message", "wsOnMessage");
+$Server->bind("open", "wsOnOpen");
+$Server->bind("close", "wsOnClose");
 
-$Server->wsStartServer('127.0.0.1', 9300);
+$Server->wsStartServer($configs->get_key("server_private_ip"), $configs->get_key("server_port"));
 
 ?>
