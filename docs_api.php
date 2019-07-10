@@ -20,17 +20,17 @@ function handle_get_request() {
     if(sizeof($str) > 2) {
         should_start_session();
         if(isset($_SESSION["loggedin"]) && isset($_SESSION["id"]) && $_SESSION["loggedin"]) {
-            if($str[2] == "retrieve") {
+            if($str[sizeof($str) - 1] == "retrieve") {
                 get_all_files();
-            } else if ($str[2] == "retrieve_shares") {
+            } else if ($str[sizeof($str) - 1] == "retrieve_shares") {
                 get_all_shares();
-            } else if($str[2] == "retrieve_my_shares") {
+            } else if($str[sizeof($str) - 1] == "retrieve_my_shares") {
                 get_my_shares();
-            } else if(strpos($str[2], "retrieve_file_id") === 0 && isset($_GET["filename"])) {
+            } else if(strpos($str[sizeof($str) - 1], "retrieve_file_id") === 0 && isset($_GET["filename"])) {
                 get_file_id($_GET["filename"]);
-            } else if(strpos($str[2], "download") === 0 && isset($_GET["file"])) {
+            } else if(strpos($str[sizeof($str) - 1], "download") === 0 && isset($_GET["file"])) {
                 download_file($_GET["file"]);
-            } else if(strpos($str[2], "get_share_id") === 0 && isset($_GET["filename"])) {
+            } else if(strpos($str[sizeof($str) - 1], "get_share_id") === 0 && isset($_GET["filename"])) {
                 $file_name = $_GET["filename"];
                 $database_manager = new database_manager();
                 if(isset($_GET["shared_by"])) {
@@ -55,11 +55,11 @@ function handle_delete_request() {
     should_start_session();
     if(isset($_SESSION["loggedin"]) && isset($_SESSION["id"]) && $_SESSION["loggedin"]) {
         $str = explode("/", $_SERVER["REQUEST_URI"]);
-        if(sizeof($str) > 2 && $str[2] == "delete_file") {
-            $file_to_delete = ltrim($str[3], ":");
+        if(sizeof($str) > 3 && $str[sizeof($str) - 2] == "delete_file") {
+            $file_to_delete = ltrim($str[sizeof($str) - 1], ":");
             delete_file(urldecode($file_to_delete));
-        } else if(sizeof($str) > 2 && $str[2] == "delete_share") {
-            $share_to_delete = ltrim($str[3], ":");
+        } else if(sizeof($str) > 3 && $str[sizeof($str) - 2] == "delete_share") {
+            $share_to_delete = ltrim($str[sizeof($str) - 1], ":");
             delete_share($share_to_delete);
         }
     } else {
@@ -71,7 +71,7 @@ function handle_post_request() {
     should_start_session();
     if(isset($_SESSION["loggedin"]) && isset($_SESSION["id"]) && $_SESSION["loggedin"]) {
         $str = explode("/", $_SERVER["REQUEST_URI"]);
-        if(sizeof($str) > 2 && $str[2] == "share") {
+        if(sizeof($str) > 2 && $str[sizeof($str) - 1] == "share") {
             $data = file_get_contents("php://input");
             $share = json_decode($data, true);
             share_file($share);

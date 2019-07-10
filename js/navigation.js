@@ -73,9 +73,9 @@ function addNavigationElementsForLoggedUser(ul) {
     var liLogout = document.createElement("li");
     var aLogout = document.createElement("a");
     aLogout.innerHTML = "Изход";
-    aLogout.href = "index.php";
+    aLogout.href = "#";
     aLogout.classList.add("navigation");
-    aLogout.addEventListener("click", function(event) { ajax("user_api.php/logout", {}); });
+    aLogout.addEventListener("click", function(event) { ajax("user_api.php/logout", {}, handleResponseFromLogout); });
 
     liLogout.appendChild(aLogout);
     liMyFiles.appendChild(aMyFiles);
@@ -88,4 +88,10 @@ function addNavigationElementsForLoggedUser(ul) {
     ul.appendChild(liSharedWithMe);
     ul.appendChild(liMyFiles);
     ul.appendChild(liHome);
+}
+
+function handleResponseFromLogout(response) {
+    if (response) {
+        window.location = "index.php";
+    }
 }

@@ -15,11 +15,11 @@ if ($_SERVER["REQUEST_METHOD"] === "GET") {
 function handle_get_request() {
     $str = explode("/", $_SERVER["REQUEST_URI"]);
     if(sizeof($str) > 2) {
-        if($str[2] == "is_logged_in") {
+        if($str[sizeof($str) - 1] == "is_logged_in") {
             handle_is_logged_in();
-        } else if($str[2] == "logout") {
+        } else if($str[sizeof($str) - 1] == "logout") {
             handle_logout();
-        } else if($str[2] == "get_socket_address") {
+        } else if($str[sizeof($str) - 1] == "get_socket_address") {
             handle_get_socket_address();
         }
     }
@@ -28,11 +28,11 @@ function handle_get_request() {
 function handle_post_request() {
     $str = explode("/", $_SERVER["REQUEST_URI"]);
     if(sizeof($str) > 2) {
-        if($str[2] == "register") {
+        if($str[sizeof($str) - 1] == "register") {
             $json = file_get_contents("php://input");
             $user = json_decode($json, true);
             handle_registration($user);
-        } else if($str[2] == "login") {
+        } else if($str[sizeof($str) - 1] == "login") {
             $json = file_get_contents("php://input");
             $user = json_decode($json, true);
             handle_login($user);
