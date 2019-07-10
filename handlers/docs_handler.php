@@ -78,7 +78,7 @@ function delete_file($file_to_delete) {
                 echo json_encode(["error_description" => "Грешка с базата данни!"], JSON_UNESCAPED_UNICODE);
             }
         } else {
-            echo json_encode(["error_description" => "Error while delete file " + $file_to_delete], JSON_UNESCAPED_UNICODE);
+            echo json_encode(["error_description" => "Error while deleting file " + $file_to_delete], JSON_UNESCAPED_UNICODE);
         }
     }
 }
