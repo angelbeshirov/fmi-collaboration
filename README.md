@@ -21,4 +21,4 @@
 	  and insert_data.sql adds the needed data so that the system can function properly. You can connect to the database either threw the
 	  terminal or using the database control panel (e.g. PHPMyAdmin of XAMPP). If the host, name and possword used for connecting to the
 	  database are different than the ones in config.ini in the config folder, then you need to reconfigure them.
-	  - now use either Chrome, Firefox or Opera to connect to localhost.
+	- now use either Chrome, Firefox or Opera to connect to localhost.
